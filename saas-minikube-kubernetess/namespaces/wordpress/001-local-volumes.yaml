@@ -1,0 +1,24 @@
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-volume-wordpress 
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/local-volume-wordpress 
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-volume-wordpress 
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/local-volume-wordpress 

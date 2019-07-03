@@ -1,0 +1,145 @@
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: drupal-pvc
+  namespace: gg
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 5Gi
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: drupal-pvc-mysql
+  namespace: gg
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 5Gi
+--- 
+apiVersion: v1
+kind: Service
+metadata: 
+  name: drupal-mysql-service
+  namespace: gg
+spec: 
+  ports: 
+    - 
+      name: mysql
+      port: 3306
+      protocol: TCP
+  selector: 
+    app: drupal-mysql
+--- 
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  name: drupal-mysql
+  namespace: gg
+spec: 
+  replicas: 1
+  template: 
+    metadata: 
+      labels: 
+        app: drupal-mysql
+    spec: 
+      containers: 
+        - 
+          env: 
+            - 
+              name: MYSQL_ROOT_PASSWORD
+              value: root_password
+            - 
+              name: MYSQL_DATABASE
+              value: drupal-database
+          image: "mysql:5.7"
+          name: cont-drupal-mysql
+          ports: 
+            - 
+              containerPort: 3306
+              name: mysql
+              protocol: TCP
+          volumeMounts: 
+            - 
+              mountPath: /var/lib/mysql
+              name: vol-drupal
+              subPath: dbdata
+      volumes: 
+        - 
+          name: vol-drupal
+          persistentVolumeClaim: 
+            claimName: drupal-pvc-mysql
+--- 
+apiVersion: v1
+kind: Service
+metadata: 
+  name: drupal-service
+  namespace: gg
+  labels:
+    app: drupal
+    tier: frontend
+    env: development
+spec: 
+  type: NodePort
+  selector:
+    app: drupal
+    tier: frontend
+    env: development
+  ports:
+    - protocol: TCP
+      port: 80  
+--- 
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  labels: 
+    app: drupal
+  name: drupal
+  namespace: gg
+spec: 
+  replicas: 1
+  template: 
+    metadata: 
+      labels: 
+        app: drupal
+    spec: 
+      initContainers:
+        -
+          name: init-sites-volume
+          image: drupal:8.6
+          command: ['/bin/bash', '-c']
+          args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R']
+          volumeMounts:
+          - mountPath: /data
+            name: vol-drupal
+      containers: 
+        - 
+          image: drupal:8.6
+          name: drupal
+          ports: 
+            - 
+              containerPort: 80
+          volumeMounts:
+          - mountPath: /var/www/html/modules
+            name: vol-drupal
+            subPath: modules
+          - mountPath: /var/www/html/profiles
+            name: vol-drupal
+            subPath: profiles
+          - mountPath: /var/www/html/sites
+            name: vol-drupal
+            subPath: sites
+          - mountPath: /var/www/html/themes
+            name: vol-drupal
+            subPath: themes
+      volumes:
+        - 
+          name: vol-drupal
+          persistentVolumeClaim: 
+            claimName: drupal-pvc

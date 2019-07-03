@@ -1,0 +1,21 @@
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: laravel-ingress
+  namespace: lara-vela
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  backend:
+    serviceName: default-http-server
+    servicePort: 80
+  rules:
+  - host: laravela.com 
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: laravel
+          servicePort: 80
+

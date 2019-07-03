@@ -1,0 +1,26 @@
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: wordpress-wordpress
+  namespace: wordpress
+  labels:
+    app: wordpress
+    tier: frontend
+    env : development
+spec:
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: wordpress-wordpress
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 1
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageValue: 70%

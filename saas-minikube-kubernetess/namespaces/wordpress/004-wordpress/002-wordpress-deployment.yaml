@@ -1,0 +1,43 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wordpress-wordpress
+  namespace: wordpress
+  labels:
+    app: wordpress
+    tier: frontend
+    env: development
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+        env: development
+    spec:
+      containers:
+      - name: wordpress-wordpress
+        image: wordpress:latest #wordpress:4.7.3-apache
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql-wordpress
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: password
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: wordpress-volume-mount
+      volumes:
+      - name: wordpress-volume-mount
+        persistentVolumeClaim:
+          claimName: wordpress-volume-wordpress
+

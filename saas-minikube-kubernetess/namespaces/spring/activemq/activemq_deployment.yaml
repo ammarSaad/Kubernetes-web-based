@@ -1,0 +1,23 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: queue
+  namespace: spring
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: queue
+    spec:
+      containers:
+        - name: web
+          image: webcenter/activemq:5.14.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 61616
+          resources:
+            limits:
+              memory: 512Mi 
+

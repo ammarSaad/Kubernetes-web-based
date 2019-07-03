@@ -1,0 +1,20 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-wordpress
+  namespace: wordpress
+  labels:
+    app: phpmyadmin
+    tier: frontend
+    env: development
+spec:
+  selector:
+    app: phpmyadmin
+    tier: frontend
+    env: development
+  ports:
+    - protocol: TCP
+      nodePort: 30224
+      port: 80
+  type: NodePort

@@ -1,0 +1,22 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: laravel
+  namespace: lara-mara
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: laravel
+    spec:
+      containers:
+        - name: laravel
+          image: ammar95/laravel-autoscaling:latest
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: APP_KEY
+            value: base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY=
+          ports:
+            - containerPort: 80

@@ -1,0 +1,41 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-wordpress
+  namespace: wordpress
+  labels:
+    app: mysql
+    tier: backend
+    env: development
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+        tier: backend
+        env: development
+    spec:
+      containers:
+      - name: mysql-wordpress
+        image: mysql:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: password
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-volume-mount
+      volumes:
+      - name: mysql-volume-mount
+        persistentVolumeClaim:
+          claimName: mysql-volume-wordpress
+

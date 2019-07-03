@@ -1,0 +1,31 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: phpmyadmin-wordpress
+  namespace: wordpress
+  labels:
+    app: phpmyadmin
+    tier: frontend
+    env: development
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+        tier: frontend
+        env: development
+    spec:
+      containers:
+      - name: phpmyadmin-wordpress
+        image: phpmyadmin/phpmyadmin:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PMA_HOST
+          value: mysql-wordpress
+        ports:
+        - containerPort: 80
+

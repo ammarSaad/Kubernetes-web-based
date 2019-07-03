@@ -1,0 +1,29 @@
+{
+  "name": "SaaS_project_API",
+  "version": "1.0.0",
+  "description": "front end UI and node.js server for the Software As A service Project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lalosh/SaaS_project_API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lalosh/SaaS_project_API/issues"
+  },
+  "dashboardpage": "https://github.com/lalosh/SaaS_project_API#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.0",
+    "hbs": "^4.0.4",
+    "hostile": "^1.3.2",
+    "k8s": "^0.4.15",
+    "open": "^6.4.0"
+  }
+}
